@@ -1,0 +1,19 @@
+{
+  "name": "client",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@logux/client": "^0.14.3",
+    "@logux/core": "^0.7.2",
+    "@logux/vuex": "^0.10.1",
+    "vue": "^3.2.23"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.10.2",
+    "vite": "^2.7.0"
+  }
+}
