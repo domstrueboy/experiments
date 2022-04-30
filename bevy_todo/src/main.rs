@@ -1,14 +1,31 @@
-use bevy::{prelude::*, winit::WinitSettings};
+use bevy::{
+    prelude::*,
+    winit::WinitSettings
+};
 
 const INITIAL_WINDOW_WIDTH: f32 = 240.0;
 const INITIAL_WINDOW_HEIGHT: f32 = 480.0;
+
 const BASIC_FONT: &str = "fonts/FiraSans-Bold.ttf";
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
 const HOVERED_BUTTON: Color = Color::rgb(0.25, 0.25, 0.25);
 const PRESSED_BUTTON: Color = Color::rgb(0.35, 0.75, 0.35);
 
-/// This example illustrates how to create a button that changes color and text based on its
-/// interaction state.
+const INITIAL_STATE: State = State {
+    input: String::new(),
+    items: Vec::new(),
+};
+
+struct State {
+    input: String,
+    items: Vec<Item>,
+}
+
+struct Item {
+    text: String,
+    done: bool,
+}
+
 fn main() {
     App::new()
         .insert_resource(WindowDescriptor {
@@ -19,8 +36,8 @@ fn main() {
             ..Default::default()
         })
         .add_plugins(DefaultPlugins)
-        // Only run the app when there is user input. This will significantly reduce CPU/GPU use.
         .insert_resource(WinitSettings::desktop_app())
+        .insert_resource(INITIAL_STATE)
         .add_startup_system(setup)
         .add_system(text_input)
         .add_system(button_system)
@@ -31,18 +48,28 @@ fn main() {
 fn text_input(
     mut char_evr: EventReader<ReceivedCharacter>,
     keys: Res<Input<KeyCode>>,
-    mut string: Local<String>,
+    // mut string: Local<String>,
+    mut state: ResMut<State>,
 ) {
     for ev in char_evr.iter() {
         println!("Got char: '{}'", ev.char);
-        string.push(ev.char);
+        state.input.push(ev.char);
     }
 
     if keys.just_pressed(KeyCode::Return) {
-        println!("Text input: {}", *string);
-        string.clear();
+        println!("Text input: {}", state.input);
+        state.items.push(Item {
+            text: "".to_string(),// state.input,
+            done: false,
+        });
+        state.input.clear();
     }
 }
+
+// fn scoreboard_system(state: Res<State>, mut query: Query<&mut Text>) {
+//     let mut text = query.single_mut().unwrap();
+//     text.sections[0].value = format!("Score: {}", scoreboard.score);
+// }
 
 fn button_system(
     mut interaction_query: Query<
